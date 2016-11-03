@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Wordpress Development - Part 2</title>
+
+		<meta name="description" content="Wordpress Presentation which covers wordpress post functions and useful wordpress trips and tricks and using LESS in wordpress.">
+		<meta name="author" content="Narendran S">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<link rel="shortcut icon" href="favicon.ico">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/solarized.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link type="text/css" rel="stylesheet" href="js/highlight/github.css"/>
+		<script type="text/javascript" src="js/highlight/highlight.min.js"></script>
+		<script>hljs.initHighlightingOnLoad();</script>
+		<!-- <link rel="stylesheet" href="css/zenburn.css">-->
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+			<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+		<!-- Meta OG Details -->
+		<meta property="og:title" content="Wordpress Development - Part 2"/>
+		<meta property="og:description" content="Wordpress Presentation which covers wordpress post functions and useful wordpress trips and tricks and using LESS in wordpress.">
+	    <meta property="og:image" content="https://naren-ui.github.io/wordpress-part2/img/share.jpg" />
+	    <meta property="og:url" content="https://naren-ui.github.io/wordpress-part2/" />
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Wordpress - Part 2 slides -->
+			<div class="slides">
+
+				<!-- slide #1 -->
+				<section>
+					<h1>Wordpress - Part 2</h1>
+					<h3>Let's dive little deeper.</h3>
+					<p>
+						<small>Created by <a href="https://github.com/naren-ui" target="_blank">Narendran S</a></small>
+					</p>
+				</section>
+
+				<!-- slide #2 -->
+				<section>
+					<h2>Agenda</h2>
+					<ul>
+						<li><a href="#/2/" class="agLink">Rewind - Part 1</a></li>
+						<li><a href="#/3/" class="agLink">Useful Functions</a></li>
+						<li><a href="#/4/" class="agLink">Tricks and Tips</a></li>
+						<li><a href="#/5/" class="agLink">Compiling LESS</a></li>
+						<li><a href="#/6/" class="agLink">Handy Plugins</a></li>
+						<li><a href="#/7/" class="agLink">Best Coding Practices</a></li>
+					<ul>
+				</section>
+
+				<!-- slide #3 -->
+				<section>
+					<h1>Rewind - Part 1</h1>
+					<p>Intallation in Localhost, Admin Settings, Files & Folders Basics, Creating Posts/Pages & editing post/page template.</p>
+				</section>
+
+				<!-- Slide Post -->
+				<section>
+
+					<!-- Slide Post #1 -->
+					<section>
+						<h1>Useful Functions</h1>
+						<p>Custom Image size, Image URL, Trim Words/Letters, Time and Post Navigation</p>
+						<a href="#/4/1" class="navigate-down enabled">
+							<img width="48" height="48" alt="Down arrow" src="img/arrow-down.png">
+						</a>
+					</section>
+
+					<!-- Slide Post #2 -->
+					<section>
+						<h2>Custom image size</h2>
+						<p>To add custom image sizes to the post thumnails, add below code in the functions.php next to the <b>add_theme_support( 'post-thumbnails' )</b> function</p>
+						<div class="editor">
+<!-- Code -->
+<pre><code class="php">add_image_size('banner-big', 1600, 480, true);
+add_image_size('banner-small', 750, 420, true);</code></pre>
+						</div>
+						<p>Then call the post thumbnail in your post pages like below</p>
+						<!-- Code -->
+						<div class="editor">
+							<pre><code class="php">the_post_thumbnail('banner-big');</code></pre>
+						</div>
+						<p><small>Note: To avoid unwanted thumbnails generated in the uploads folder, uncheck default image sizes in the admin in Settings > Media menu </small></p>
+					</section>
+
+					<!-- Slide Post #3 -->
+					<section>
+						<h2>Getting Image URL</h2>
+						<p>the_post_thumbnail_url() used to get the featured image from the post.</p>
+						<div class="editor">
+<pre><code class="php">&lt;img src="&lt;?php echo the_post_thumbnail_url('banner-big'); ?>" />
+&lt;span style="background-image: url( &lt;?php echo the_post_thumbnail_url('banner-small') ?> );">&lt;/span></code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Post #4 -->
+					<section>
+						<h2>Trim Words</h2>
+						<p>wp_trim_words($text, $num_words, $more) used to trims text to a certain number of words.</p>
+						<div class="editor">
+<pre><code class="handlebars">$content = get_the_content();
+$content = wp_trim_words($content, 20, '...');
+echo '&lt;p>'.$content.'&lt;/p>';</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Post #5 -->
+					<section>
+						<h2>Trim Letters (Custom function)</h2>
+						<p>add a wp_trim_letters($text, $num_letters) function in functions.php like below.</p>
+						<div class="editor">
+<pre><code class="php">function wp_trim_letters( $content, $count ) {
+	$desc = strip_tags( $content );
+	if(strlen($content) > $count){$desc = substr($desc, 0, $count).'...';}
+	return $desc;
+}</code></pre>
+</div>
+						<p>Then call it in your post/page like below</p>
+						<div class="editor">
+<pre><code class="handlebars">$title = get_the_content();
+$title = wp_trim_letters($title, 160);
+echo '&lt;h1>'.$title.'&lt;/h1>';</code></pre>
+					</section>
+
+					<!-- Slide Post #6 -->
+					<section>
+						<h2>Display Time</h2>
+						<p>get_the_time() used to get the published time of the post/page.</p>
+						<div class="editor">
+							<pre><code class="handlebars">echo get_the_time('jS F, Y');</code></pre>
+						</div>
+						<p class="note"><small>Output: <b>2nd November, 2016</b></small></p>
+						<div class="editor">
+<pre><code class="apache">j = The day of the month.
+S = The English suffix for the day of the month (Ex. 1st, 2nd or 15th)
+F = Full name for the month.
+Y = The year in 4 digits. (lower-case y gives the year's last 2 digits)
+</code></pre>
+						</div>
+						<p><a href="https://codex.wordpress.org/Formatting_Date_and_Time" target="_blank">Explore Date Formats</a></p>
+					</section>
+
+					<!-- Slide Post #7 -->
+					<section>
+						<h2>Previous and Next Post Link</h2>
+						<p>get_previous_post() and get_next_post() used to get the previous and Next Post</p>
+						<div class="editor">
+<pre><code class="js">$prev_post = get_previous_post();
+if (!empty( $prev_post )) { echo '&lt;a href="get_permalink('.$prev_post->ID.')">$prev_post->post_title</a>'; }
+$next_post = get_next_post();
+if (!empty( $next_post )) { echo '&lt;a href="get_permalink('.$next_post->ID.')">$next_post->post_title</a>'; }
+</code></pre>
+						</div>
+					</section>
+
+				</section>
+
+				<!-- Slide Functions -->
+				<section>
+
+					<!-- Slide Functions #1 -->
+					<section>
+						<h1>Tricks and Tips</h1>
+						<p>URL Shortcodes, Search form, Menu Class and Remove autogenerated &lt;p> tags</p>
+						<a href="#/5/1" class="navigate-down enabled">
+							<img width="48" height="48" alt="Down arrow" src="img/arrow-down.png">
+						</a>
+					</section>
+
+					<!-- Slide Functions #2 -->
+					<section>
+						<h2>URL Shortcodes</h2>
+						<p>To add URL shortcodes in the editor add below code in functions.php</p>
+						<div class="editor text-smaller">
+<pre><code class="php">/* Website Url Short Code  */
+function wp_site_url() {
+	return get_site_url();
+}
+add_shortcode('wp_site_url', 'wp_site_url');
+
+/* Template Url Short Code  */
+function wp_template_url() {
+	return get_template_directory_uri();
+}
+add_shortcode('wp_template_url', 'wp_template_url');</code></pre>
+						</div>
+						<p>Then use both short codes in admin editor like below</p>
+						<div class="editor text-smaller">
+<pre><code class="php">&lt;a href="[wp_site_url]/about-us">&lt;/a>
+&lt;img src="[wp_template_url]/img/img-serviceman.png" /></code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Functions #2.2 -->
+					<section>
+						<h2>Useful data for scripts</h2>
+						<p>We can set needful information as an JS object like below</p>
+						<div class="editor text-smaller">
+<pre><code class="html">&lt;script>
+	var wpsite	=	{
+		theme_url	: "&lt;?php echo <span class="hljs-string">get_template_directory_uri()</span>; ?>",
+		site_url	: "&lt;?php echo <span class="hljs-string">site_url()</span>; ?>",
+		env 		: "&lt;?php echo <span class="hljs-string">WP_ENV</span>; ?>",
+		is_mobile	: "&lt;?php echo (<span class="hljs-string">wp_is_mobile</span>) ? true : false ?>"
+	};
+&lt;/script></code></pre>
+						</div>
+						<p>Then we can access it in scripts like below</p>
+						<div class="editor text-smaller">
+<pre><code class="html">if(<span class="hljs-string">wpsite.is_mobile</span>)
+img.src = <span class="hljs-string">wpsite.theme_url</span> + '/img/avatar.png';</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Functions #3 -->
+					<section>
+						<h2>Custom Search Form</h2>
+						<p>Customize your search form by adding below code and remove the default search function in the page.</p>
+						<div class="editor">
+<pre><code class="html">&lt;!-- Search Form -->
+&lt;form class="searchForm" action="&lt;?php echo esc_url( home_url( '/' ) ); ?>" >
+	&lt;input type="text" id="search_field" class="searchInput" name="s" value="" placeholder="Enter search term" />
+	&lt;input type="submit" class="searchLink" value="Search" />
+&lt;/form></code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Functions #5 -->
+					<section>
+						<h2>Remove autogenerated &lt;p> tags</h2>
+						<p>We can easily get without autogenerated &lt;p> tags using get_the_content() function instead the_content().<br />But, get_the_content() does not auto-embed videos, or expand shortcodes. So, we can use below function.</p>
+						<div class="editor">
+<pre><code class="php">remove_filter( 'the_content', 'wpautop' );
+remove_filter( 'the_excerpt', 'wpautop' );</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Functions #6 -->
+					<section>
+						<h2>Targetting Page</h2>
+						<p>To add scripts and styles only to the particular page template, add below code in <mark>wp_enqueue_scripts</mark> function in functions.php</p>
+						<div class="editor text-smaller">
+<pre><code class="php">if(is_page('about-us')) {
+	wp_enqueue_style( 'about-style', get_template_directory_uri() . '/css/about.css', array(), $script_version );
+	wp_enqueue_script( 'about-script', get_template_directory_uri() . '/js/about.js', array( 'jquery' ), $script_version, true );
+}</code></pre>
+						</div>
+						<p>To add unique class in body tag only to the particular page template, add below code in <mark>body_class</mark> function in functions.php</p>
+						<div class="editor text-smaller">
+<pre><code class="php">if(is_page('about-us')) {
+	$classes[] =  'page-aboutus';
+}</code></pre>
+						</div>
+						<p class="note"><small>Note: You can also use is_page_template(file-name) to target a page template. Ex: is_page_template(page-aboutus.php)</small></p>
+					</section>
+
+					<!-- Slide Functions #7 -->
+					<section>
+						<h2>Adding class to the individual menu</h2>
+						<ul class="text-smaller">
+							<li>In the admin menu section (Appearence > Menus) select screen option in top right corner.</li>
+							<li>It slides screen option widget. Check CSS Classes checkbox to enable CSS class name in menu</li>
+							<li>Then open your menu and add your class name in CSS Classes field</li>
+						</ul>
+						<figure class="screenshot">
+							<a href="img/menu-class.jpg" target="_blank"><img src="img/menu-class.jpg" alt="" /></a>
+						</figure>
+					</section>
+
+					<!-- Slide Functions #7 -->
+					<section>
+						<h2>Text Formatting Shortcuts</h2>
+						<p>We have following text formatting shortcuts in admin editor by default.</p>
+						<p>For example <b>##title</b> converts <b>&lt;h2>title&lt;h2></b></p>
+						<figure class="screenshot">
+							<img src="img/shortcuts.png" style="width: 80%;" alt="" />
+						</figure>
+					</section>
+
+				</section>
+
+				<!-- Slide LESS -->
+				<section>
+
+					<!-- Slide LESS #1 -->
+					<section>
+						<h1>Compiling LESS</h1>
+						<p>We can use LESS for development using GRUNT. Follow the below steps.</p>
+						<a href="#/6/1" class="navigate-down enabled">
+							<img width="48" height="48" alt="Down arrow" src="img/arrow-down.png">
+						</a>
+					</section>
+
+					<!-- Slide LESS #2 -->
+					<section>
+						<h2>Step 1: Install Node and Grunt</h2>
+						<p>If you already installed Node.js and Grunt, skip this step.</p>
+						<div class="steps">
+							<p>Install <a href="https://nodejs.org/" target="_blank">Node.js</a></p>
+						</div>
+						<div class="steps">
+							<p>Install Grunt globally using Node package manager by running below command in any commandline editor.</p>
+							<var>npm install -g grunt-cli</var>
+						</div>
+						<div class="steps">
+							<p>Then move to your project directory</p>
+							<var>cd YOUR_PROJECT_DIRECTORY</var>
+						</div>
+					</section>
+
+					<!-- Slide LESS #2 -->
+					<section>
+						<h2>Step 2: Install packages and Run tasks</h2>
+						<p><a href="src/less-compiler.zip" class="subhead" download>Download example</a></p>
+						<div class="steps">
+							<p>Add a <b>Gruntfile.js</b> with basic LESS tasks in your project directory.</p>
+						</div>
+						<div class="steps">
+							<p>Add a <b>package.json</b> with basic LESS packages in your project directory.</p>
+						</div>
+						<div class="steps">
+							<p>Then install packages for LESS Compiler</p>
+							<var title="After this node_modules folder will be injected in your project directory.">npm install</var>
+						</div>
+						<div class="steps">
+							<p><mark>That's it!</mark> Run Grunt</p>
+							<var>grunt</var>
+						</div>
+						<a href="http://gruntjs.com/getting-started" target="_blank">Learn about Gruntfile.js and package.json here</a>
+					</section>
+
+				</section>
+
+				<!-- Slide Plugins -->
+				<section>
+
+					<!-- Slide Plugin #1 -->
+					<section>
+						<h1>Handy Plugins</h1>
+						<p>Accelerated Mobile Pages (AMP), WP Smush, Lazy Load, Yoast SEO and Syntax Highlighter</p>
+						<a href="#/6/1" class="navigate-down enabled">
+							<img width="48" height="48" alt="Down arrow" src="img/arrow-down.png">
+						</a>
+					</section>
+
+					<!-- Slide Plugin #3 -->
+					<section>
+						<h2>AMP plugin</h2>
+						<p class="subhead">AMP Ready articles</p>
+						<p>This plugin adds support for the <a href="https://www.ampproject.org/" target=_blank>Accelerated Mobile Pages</a> (AMP) Project, which is an an open source initiative that aims to provide mobile optimized content that can load instantly everywhere.</p>
+						<div class="editor">
+							<pre><code class="php">Install and activate <mark>AMP</mark> plugin from the admin panel.</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Plugin #4 -->
+					<section>
+						<h2>WP Smush Plugin</h2>
+						<p class="subhead">Image Optimizer</p>
+						<p>When you upload images to the media library, It'll automatically optimize them.</p>
+						<div class="editor">
+							<pre><code class="php">Install and activate <mark>WP Smush</mark> plugin from the admin panel.
+You have options to set which images needs to be optimized in plugin settings</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Plugin #5 -->
+					<section>
+						<h2>Lazy load</h2>
+						<p class="subhead">Image Preloader</p>
+						<p>Lazy load images to improve page load times. Uses jQuery.sonar to only load an image when it's visible in the viewport.</p>
+						<div class="editor">
+							<pre><code class="php">Install and activate <mark>Lazy Load</mark> plugin from the admin panel.</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Plugin #6 -->
+					<section>
+						<h2>HTML Editor Syntax Highlighter</h2>
+						<p class="subhead">Syntax Highlighter</p>
+						<p>Add syntax highlighting in the WordPress Post & Page HTML/text editor using Codemirror.js</p>
+						<div class="editor">
+							<pre><code class="html">Install and activate <mark>HTML Editor Syntax Highlighter</mark> plugin from the admin panel.
+Try Wide range of editor styles
+Use Fullscreen Mode
+Manage Editor Font size
+</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Plugin #7 -->
+					<section>
+						<h2>Yoast SEO</h2>
+						<p class="subhead">WordPress SEO</p>
+						<p>It is the most complete WordPress SEO plugin that exists now.</p>
+						<div class="editor">
+							<pre><code class="php">Install and activate <mark>Yoast SEO</mark> plugin from the admin panel.
+Give page title, page description in SEO fields of your posts/pages editor.</code></pre>
+						</div>
+					</section>
+
+					<!-- Slide Plugin #8 -->
+					<section>
+						<h2>Duplicator</h2>
+						<p class="subhead">Backup</p>
+						<p>The Duplicator gives WordPress administrators the ability to migrate, copy or clone a site from one location to another. The plugin also serves as a simple backup utility.</p>
+						<div class="editor">
+							<pre><code class="php">Install and activate <mark>Duplicator</mark> plugin from the admin panel.
+Generate package and download it for backup in weekly/biweekly basis</code></pre>
+						</div>
+					</section>
+
+				</section>
+
+				<!-- Coding Tips -->
+				<section>
+
+					<section>
+						<h1>Best Coding Practices</h1>
+						<p>Title, Images, Links, Sementic tags, Editor free styles, New klite theme</p>
+						<a href="#/7/1" class="navigate-down enabled">
+							<img width="48" height="48" alt="Down arrow" src="img/arrow-down.png">
+						</a>
+					</section>
+
+					<section>
+						<h2>Title</h2>
+						<div class="editor">
+							<pre><code class="js">Use heading flow [h1 - h6] in a page properly
+Use heading tags in needed place only</code></pre>
+						</div>
+					</section>
+
+					<section>
+						<h2>Images</h2>
+						<div class="editor">
+							<pre><code class="js">Use hyphon in image names and add alternate text
+Add responsive image for uploaded images
+Use speak attribute, if any information related image used as background image</code></pre>
+						</div>
+					</section>
+
+					<section>
+						<h2>Links</h2>
+						<div class="editor">
+							<pre><code class="html">Add title attribute
+Avoid static url for current project navigation
+For external links, open it in new window
+Use speak attribute, if any information related image used as background image</code></pre>
+						</div>
+					</section>
+
+					<section>
+						<h2>Sementic tags</h2>
+						<div class="editor">
+							<pre><code class="html">Use sementic tags properly and use <mark>role</mark> attribute where required.
+&lt;article> tag for post/page/comment details
+&lt;time> tag for published/commented time
+&lt;mark> for highlighted text such as reference text/External titles inside paragraph
+&lt;cite> for title text such as author/names/location title
+&lt;blockquote> for quoted text and testimonials text
+&lt;address> for address/location details</code></pre>
+						</div>
+					</section>
+
+					<section>
+						<h2>Editor free styles</h2>
+						<div class="editor">
+							<pre><code class="html">Add 3 heading styles like [ &lt;h2>,&lt;/h3> ], [ &lt;h4>,&lt;/h5> ], [ &lt;p>&lt;b> ]
+Keep font size common for all the texts than title. Don't only style for only &lt;p> tag
+Check for the large and the small images in the paragraph
+Style for the contents that client can add like below
+bullet list, order list, text link, video, embeded video and etc.,
+</code></pre>
+						</div>
+					</section>
+
+					<section>
+						<h1>klite</h1>
+						<h2>lightweight independent wordpress theme</h2>
+						<p><a href="src/klite.zip" class="subhead" download>Download</a></p>
+					</section>
+				</section>
+
+
+				<section>
+					<h2>Task</h2>
+					<ol>
+						<li>Install new wordpress package and give site title as 'KRDS NEWS'</li>
+						<li>Add and activate klite theme</li>
+						<li>Add about us page and add special class to that page. Add an icon to about us menu.</li>
+						<li>Remove Defualt post thumbnail sizes and add your custom sizes.</li>
+						<li>Upload featured image in about us page and show responsive image of it</li>
+						<li>Compile LESS using Grunt</li>
+						<li>Install AMP, WP SMUSH, Yoast SEO plugins</li>
+						<li>Add a post with different contents and use shortcodes</li>
+					</ol>
+				</section>
+
+				<section style="text-align: left;">
+					<h1>THE END</h1>
+					<p>
+						- <a href="https://codex.wordpress.org/Function_Reference" target="_blank">Wordpress Function Reference</a><br>
+						- <a href="http://gruntjs.com/getting-started" target="_blank">Grunt.js</a><br>
+						- <a href="https://codex.wordpress.org/Formatting_Date_and_Time" target="_blank">Formatting Date and Time</a><br>
+					</p>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				transition: 'convex', // none/fade/slide/convex/concave/zoom
+			});
+
+		</script>
+
+	</body>
+</html>
