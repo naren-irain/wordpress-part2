@@ -26,32 +26,15 @@ module.exports = function(grunt) {
 			options: {
 				atBegin: true
 			}
-        },
-
-		postcss: {
-            options: {
-                map: true,
-                processors: [
-                    require('autoprefixer')({
-                        browsers: ["chrome > 10", "firefox > 10", "ie > 7", "android > 2", "ios > 5"]
-                    })
-                ]
-            },
-            dist: {
-                src: 'css/build/*.css'
-            }
         }
 
-        // @TODO Add minify css task
     });
 
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-postcss');
 
     grunt.registerTask('default', [
 		'less',
-		'watch',
-		'postcss'
+		'watch'
 	]);
 };
